@@ -1,0 +1,393 @@
+openapi: 3.0.2
+info:
+  title: Загрузка CSV с портфелем СБИ
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/v1
+    description: Основной урл
+tags:
+  - name: briefcase-SBI
+    description: Набор методов работы с портфелем СБИ
+paths:
+  /briefcasesbi:
+    post:
+      tags:
+        - briefcase-SBI
+      summary: Запись данных на отчетную дату
+      description: ''
+      requestBody:
+        description: Метаданные файла, которые необходимо загрузить в базу, а также содержимое файла
+        content:
+          application/json:
+            schema:  
+              $ref: "#/components/schemas/briefcaseMetadata"
+            
+      responses: 
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responseAddBriefcase"
+  
+  /briefcasesbi/getMetadata:
+    post:
+      tags:
+        - briefcase-SBI
+      summary: Чтение метаданных загруженных файлов
+      description: Чтение всех метаданных загруженных файлов с возможностью отбора и сортировки списка
+      
+      # --> Шаблон. Стандартный набор параметров при чтении списка
+      parameters:
+        - name: sort
+          in: query
+          required: false
+          schema:
+            type: string
+            description: В сортировке указываются имена полей и направление сортировки.
+            example: +name,-cost
+        - name: limit
+          in: query
+          required: true
+          schema:
+            type: integer
+            description: Ограничение количества элементов в выборке. Значение - 0 - выбрать всё
+            example: 15
+        - name: offset
+          in: query
+          required: true
+          schema:
+            type: integer
+            description: Смещение страницы - 0, 1, 2 и т.д.
+            example: 1
+        - name: returnCount
+          in: query
+          required: false
+          schema:
+            type: boolean
+            description: Указывается нужно ли возвращать общее количество элементов
+            example: false
+        - name: returnOnlyCount
+          in: query
+          required: false
+          schema:
+            type: boolean
+            description: Указывается нужно ли вернуть только количество элементов
+            example: false
+      # <-- Шаблон.
+
+      requestBody:
+        description: В теле передаются данные для фильтрации выборки
+        content:
+          application/json:
+            schema:  
+              $ref: "#/components/schemas/metadataReq"
+            
+      responses: 
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/metadataResp"
+
+  /briefcasesbi/getData:
+    post:
+      tags:
+        - briefcase-SBI
+      summary: Чтение метаданных загруженных файлов
+      description: Чтение всех метаданных загруженных файлов с возможностью отбора и сортировки списка
+      
+      # --> Шаблон. Стандартный набор параметров при чтении списка
+      parameters:
+        - name: sort
+          in: query
+          required: false
+          schema:
+            type: string
+            description: В сортировке указываются имена полей и направление сортировки.
+            example: +name,-cost
+        - name: limit
+          in: query
+          required: true
+          schema:
+            type: integer
+            description: Ограничение количества элементов в выборке. Значение - 0 - выбрать всё
+            example: 15
+        - name: offset
+          in: query
+          required: true
+          schema:
+            type: integer
+            description: Смещение страницы - 0, 1, 2 и т.д.
+            example: 1
+        - name: returnCount
+          in: query
+          required: false
+          schema:
+            type: boolean
+            description: Указывается нужно ли возвращать общее количество элементов
+            example: false
+        - name: returnOnlyCount
+          in: query
+          required: false
+          schema:
+            type: boolean
+            description: Указывается нужно ли вернуть только количество элементов
+            example: false
+      # <-- Шаблон.
+
+      requestBody:
+        description: В теле передаются данные для фильтрации выборки
+        content:
+          application/json:
+            schema:  
+              $ref: "#/components/schemas/metadataReq"
+            
+      responses: 
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/metadataResp"              
+          
+                   
+components:
+  schemas:
+    briefcaseMetadata:
+      title: briefcaseMetadata
+      type: object
+      properties:
+        fileName:
+          type: string
+          example: test
+        reportingDate:
+          type: string
+          format: date
+        loadDate:
+          type: string
+          format: date-time
+        employeeId:
+          type: string
+          format: uuid
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/data"
+      required:
+      - fileName
+      - reportingDate
+      - loadDate
+      - employeeId
+      - data
+    
+    data:
+      title: data
+      type: object
+      properties:
+        dealId:
+          type: integer
+          example: 59
+          description: Идентификатор сделки
+        dealName:
+          type: string
+          example: НИИ Застройка
+        financialInstrumentId:
+          type: string
+          example: 59-Заем-2
+        financialInstrumentType:
+          type: string
+          example: кредит
+        reportingDate:
+          type: string
+          format: date
+        clientCrmId:
+          type: string
+          example: 1-76TSYN8
+        clientName:
+          type: string
+          example: АО Ромашка
+        loanAgreementNumber:
+          type: string
+          example: РН-1
+        interestRatePerCustomer:
+          type: number
+          example: 12.25697401
+        conclusionDate:
+          type: string
+          format: date
+        currencyCode:
+          type: string
+          example: RUB
+        loanAgreementWithSberbankNumber:
+          type: integer
+          example: 6016
+        loanAgreementWithSberbankConclusionDate:
+          type: string
+          format: data
+        smbProduct:
+          type: boolean
+          example: True
+        fullParticipationOfTbCaInTheMargin:
+          type: boolean
+          example: True
+        balanceOfUrgentDebtAsOfTheDate:
+          type: number
+          example: 731166002.01
+        bsReserve:
+          type: integer
+          example: 0
+        plReserveForThePeriod:
+          type: integer
+          example: 0
+        plOfTheWarrantForThePeriod:
+          type: integer
+          example: 0
+        commissionIncome:
+          type: integer
+          example: 0
+        ifrsIncome:
+          type: integer
+          example: 8266719
+        creditModificationEffect:
+          type: integer
+          example: 65431
+        writeOff:
+          type: integer
+          example: 7524
+        comment:
+          type: string
+          example: test
+        fundingEarlyRepaymentFee:
+          type: integer
+          example: 78678
+        unselectedLimit:
+          type: integer
+          example: 7867
+        stockIncomeDividends:
+          type: integer
+          example: 45645
+        stockIncomeRevaluationOfFairValue:
+          type: integer
+          example: 564
+        additionalProfitabilityIncomeRevaluationOfFairValue:
+          type: integer
+          example: 456
+        defaultAssets3BasketPnlAdjustmentUnwind:
+          type: integer
+          example: 7865
+        shareOfDiaInIncome:
+          type: number
+          example: 0.5
+        subdivisionDepartmentWithHardIncome:
+          type: string
+          example: какое-то подразделение
+    
+    responseAddBriefcase:
+      title: responseAddBriefcase
+      type: object
+      properties:
+        resalt:
+          type: object
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/error"
+        status:
+          type: string
+          example: SUCCESS / WARNING / ERROR 
+    
+    metadataResp:
+      title: metadataResponse
+      type: object
+      properties:
+        resalt:
+          properties:
+            listInfo:
+              $ref: "#/components/schemas/resultFSP"
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/data"
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/error"
+        status:
+          type: string
+          example: SUCCESS / WARNING / ERROR
+    
+    # схема запроса метаданных по файлу   
+    metadataReq:
+      title: metadataRequest
+      type: object
+      properties:
+        filter:
+          type: object
+          properties:
+            reportingDate:
+              $ref: "#/components/schemas/dateRangeTemplate"
+            loadDate:
+              $ref: "#/components/schemas/dateRangeTemplate"
+            fileNameLike:
+              type: string
+            employeeId:
+              type: array
+              items:
+                type: string
+                format: uuid
+    
+    
+    
+    resultFSP:
+      title: resultFSP
+      type: object
+      properties:
+        limit:
+          type: integer
+        offset:
+          type: integer
+        count:
+          type: integer
+
+    # Шаблон диапазона дат для фильтрации
+    dateRangeTemplate:
+      title: dateRangeTemplate
+      type: object
+      properties:
+        from:
+          type: string
+          format: date
+        to:
+          type: string
+          format: date
+
+    # Шаблон для массива ошибок
+    error:
+      title: error
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+
+
+    # Шаблон ответа
+    responseTemplate:
+      title: responseTemplate
+      type: object
+      properties:
+        resalt:
+          type: object
+          #type: array
+          #items:
+          #  item
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/error"
+        status:
+          type: string
+          example: SUCCESS / WARNING / ERROR     
