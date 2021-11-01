@@ -20,7 +20,7 @@ paths:
         content:
           application/json:
             schema:  
-              $ref: "#/components/schemas/briefcaseMetadata"
+              $ref: "#/components/schemas/briefcaseMetadataReq"
             
       responses: 
         '200':
@@ -95,8 +95,8 @@ paths:
     post:
       tags:
         - briefcase-SBI
-      summary: Чтение метаданных загруженных файлов
-      description: Чтение всех метаданных загруженных файлов с возможностью отбора и сортировки списка
+      summary: Чтение данных загруженных файлов
+      description: Чтение всех данных загруженных файлов с возможностью отбора и сортировки списка
       
       # --> Шаблон. Стандартный набор параметров при чтении списка
       parameters:
@@ -142,7 +142,7 @@ paths:
         content:
           application/json:
             schema:  
-              $ref: "#/components/schemas/metadataReq"
+              $ref: "#/components/schemas/dataReq"
             
       responses: 
         '200':
@@ -155,8 +155,8 @@ paths:
                    
 components:
   schemas:
-    briefcaseMetadata:
-      title: briefcaseMetadata
+    briefcaseMetadataReq:
+      title: briefcaseMetadataRequest
       type: object
       properties:
         fileName:
@@ -171,6 +171,7 @@ components:
         employeeId:
           type: string
           format: uuid
+        
         data:
           type: array
           items:
@@ -284,11 +285,34 @@ components:
           type: string
           example: какое-то подразделение
     
+    metadataStructure:
+      title: metadataStructure
+      type: object
+      properties:
+        objectId:
+          type: string
+          format: uuid
+        number:
+          type: integer
+          example: 1
+        fileName:
+          type: string
+          example: sbi_portfolio_to_pao_20211031.csv
+        reportingDate:
+          type: string
+          format: date
+        loadDate:
+          type: string
+          format: date-time
+        employeeId:
+          type: string
+          format: uuid
+
     responseAddBriefcase:
       title: responseAddBriefcase
       type: object
       properties:
-        resalt:
+        result:
           type: object
         errors:
           type: array
@@ -297,27 +321,7 @@ components:
         status:
           type: string
           example: SUCCESS / WARNING / ERROR 
-    
-    metadataResp:
-      title: metadataResponse
-      type: object
-      properties:
-        resalt:
-          properties:
-            listInfo:
-              $ref: "#/components/schemas/resultFSP"
-            items:
-              type: array
-              items:
-                $ref: "#/components/schemas/data"
-        errors:
-          type: array
-          items:
-            $ref: "#/components/schemas/error"
-        status:
-          type: string
-          example: SUCCESS / WARNING / ERROR
-    
+        
     # схема запроса метаданных по файлу   
     metadataReq:
       title: metadataRequest
@@ -338,7 +342,72 @@ components:
                 type: string
                 format: uuid
     
+    # схема ответа на запрос метаданных по файлу
+    metadataResp:
+      title: metadataResponse
+      type: object
+      properties:
+        result:
+          properties:
+            listInfo:
+              $ref: "#/components/schemas/resultFSP"
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/metadataStructure"
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/error"
+        status:
+          type: string
+          example: SUCCESS / WARNING / ERROR
+
+    # схема запроса данных по файлу   
+    dataReq:
+      title: dataRequest
+      type: object
+      properties:
+        filter:
+          type: object
+          properties:
+            reportingDate:
+              $ref: "#/components/schemas/dateRangeTemplate"
+            conclusionDate:
+              $ref: "#/components/schemas/dateRangeTemplate"
+            dealId:
+              type: string
+            dealName:
+              type: string
+            financialInstrumentId:
+              type: string
+            financialInstrumentType:
+              type: string
+            clientCrmId:
+              type: string
+            clientName:
+              type: string
     
+    # схема ответа на запрос данных по файлу
+    dataResp:
+      title: dataResponse
+      type: object
+      properties:
+        result:
+          properties:
+            listInfo:
+              $ref: "#/components/schemas/resultFSP"
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/data"
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/error"
+        status:
+          type: string
+          example: SUCCESS / WARNING / ERROR        
     
     resultFSP:
       title: resultFSP
@@ -351,7 +420,7 @@ components:
         count:
           type: integer
 
-    # Шаблон диапазона дат для фильтрации
+    # шаблон диапазона дат для фильтрации
     dateRangeTemplate:
       title: dateRangeTemplate
       type: object
@@ -363,23 +432,12 @@ components:
           type: string
           format: date
 
-    # Шаблон для массива ошибок
-    error:
-      title: error
-      type: object
-      properties:
-        code:
-          type: string
-        message:
-          type: string
-
-
-    # Шаблон ответа
+    # шаблон ответа. На бэке ППРБ3 формируется через класс ApiResponse
     responseTemplate:
       title: responseTemplate
       type: object
       properties:
-        resalt:
+        result:
           type: object
           #type: array
           #items:
@@ -390,4 +448,14 @@ components:
             $ref: "#/components/schemas/error"
         status:
           type: string
-          example: SUCCESS / WARNING / ERROR     
+          example: SUCCESS / WARNING / ERROR
+    
+    # шаблон структуры для массива errors
+    error:
+      title: error
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string     
