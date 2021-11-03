@@ -45,7 +45,7 @@ paths:
           schema:
             type: string
             description: В сортировке указываются имена полей и направление сортировки.
-            example: +name,-cost
+            example: +number,-reportingDate
         - name: limit
           in: query
           required: true
@@ -161,7 +161,7 @@ components:
       properties:
         fileName:
           type: string
-          example: test
+          example: sbi_portfolio_to_pao_20211031.csv
         reportingDate:
           type: string
           format: date
