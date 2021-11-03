@@ -9,6 +9,41 @@ tags:
   - name: briefcase-SBI
     description: Набор методов работы с портфелем СБИ
 paths:
+  /briefcasesbi/financialInstrumentType:
+    get:
+      tags:
+        - briefcase-SBI
+      summary: Чтение типов финансовых инструментов
+      description: ''
+                  
+      responses: 
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responseGetFinancialInstrumentType"
+    
+    post:
+      tags:
+        - briefcase-SBI
+      summary: Запись типов финансовых инструментов
+      description: ''
+      requestBody:
+        description: Структура объекта "Типы финансовых инструментов"
+        content:
+          application/json:
+            schema:  
+              $ref: "#/components/schemas/dictionary"
+
+      responses: 
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responsePostFinancialInstrumentType"
+
   /briefcasesbi:
     post:
       tags:
@@ -162,18 +197,22 @@ components:
         fileName:
           type: string
           example: sbi_portfolio_to_pao_20211031.csv
+          description: Наименование загруженного файла. Проверки - 1. Наименование файла должно соответствовать фаблону "sbi_portfolio_to_pao_YYYYMMDD.csv"   2. Число DD в дате должно соответствовать последнему дню месяца MM 
         reportingDate:
           type: string
           format: date
+          description: Отчетная дата. Проверки - 1. Число DD в дате должно соответствовать последнему дню месяца MM    2. Должна быть меньше или равна дате в loadDate. Значение заполняется из первого элемента файла из поля reportingDate.
         loadDate:
           type: string
           format: date-time
+          description: Дата загрузки файла в формате "YYYY-MM-DDTHH:MI:SS.MSSZ" приведенная к UTC+0. При отображении в UI дата и время корректируются в соответствии с локальной timeZone пользователя
         employeeId:
           type: string
           format: uuid
-        
+          description: Идентификатор пользователя, который выполнил загрузку файла
         data:
           type: array
+          description: Загружаемые данные из файла
           items:
             $ref: "#/components/schemas/data"
       required:
@@ -190,13 +229,15 @@ components:
         objectId:
           type: string
           format: uuid
+          description: Идентификатор записи. Заполняется при создании объекта в БД.
         metadataId:
           type: string
           format: uuid
+          description: Ссылка на метаданные файла из которого получен объект.
         dealId:
           type: integer
           example: 59
-          description: Идентификатор сделки
+          description: Идентификатор сделки.
         dealName:
           type: string
           example: НИИ Застройка
@@ -206,9 +247,11 @@ components:
         financialInstrumentType:
           type: string
           example: кредит
+          description: Тип финансового инструмента. Проверка - 1. Значение поля financialInstrumentType должно соответствовать одному из значений справочника FINANCIAL_INSTRUMENT_TYPE поля name. Если значение не соответствует, показать предупреждение.
         reportingDate:
           type: string
           format: date
+          description: Отчетная дата. Проверки - 1. Число DD в дате должно соответствовать последнему дню месяца MM    2. Должна быть меньше или равна дате в loadDate.
         clientCrmId:
           type: string
           example: 1-76TSYN8
@@ -221,12 +264,14 @@ components:
         interestRatePerCustomer:
           type: number
           example: 12.25697401
+          description: Процентная ставка на клиента (эффективная ставка по МСФО). Целая часть не может быть больше 30.
         conclusionDate:
           type: string
           format: date
         currencyCode:
           type: string
           example: RUB
+          description: Валюта. Проверка - 1. Значение поля currencyCode должно соответствовать одному из значений справочника CURRENCIES поля code.
         loanAgreementWithSberbankNumber:
           type: integer
           example: 6016
@@ -242,6 +287,7 @@ components:
         balanceOfUrgentDebtAsOfTheDate:
           type: number
           example: 731166002.01
+          description: Остаток срочной задолженности (основной долг) на дату
         bsReserve:
           type: integer
           example: 0
@@ -415,6 +461,7 @@ components:
           type: string
           example: SUCCESS / WARNING / ERROR        
     
+    # шаблон объекта listInfo для ответов на запросы с фильтрацией, сортировкой и пагинацией
     resultFSP:
       title: resultFSP
       type: object
@@ -425,6 +472,38 @@ components:
           type: integer
         count:
           type: integer
+
+    # структура ответа на POST запрос "Типы финансовых инструментов"
+    responsePostFinancialInstrumentType:
+      title: responseFinancialInstrumentType
+      type: object
+      properties:
+        result:
+          $ref: "#/components/schemas/dictionary"
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/error"
+        status:
+          type: string
+          example: SUCCESS / WARNING / ERROR
+    
+    # структура ответа на GET запрос "Типы финансовых инструментов"
+    responseGetFinancialInstrumentType:
+      title: responseFinancialInstrumentType
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: "#/components/schemas/dictionary"
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/error"
+        status:
+          type: string
+          example: SUCCESS / WARNING / ERROR
 
     # шаблон диапазона дат для фильтрации
     dateRangeTemplate:
@@ -459,9 +538,30 @@ components:
     # шаблон структуры для массива errors
     error:
       title: error
+      description: Структура элемента массива errors
       type: object
       properties:
         code:
           type: string
+          description: Код ошибки
+          example: VALIDATION
         message:
-          type: string     
+          type: string
+          description: Описание ошибки
+          example: Какое-то описание ошибки
+    
+    # шаблон структуры справочника
+    dictionary:
+      title: dictionary
+      description: Структура стандартного справочника
+      type: object
+      properties:
+        code:
+          type: string
+          description: Идентификатор записи (первичный ключ)
+        name:
+          type: string
+          description: Наименование элемента 
+        nameEn:
+          type: string
+          description: Наименование элемента на английском языке 
