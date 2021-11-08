@@ -199,27 +199,30 @@ components:
       title: briefcaseMetadataRequest
       type: object
       properties:
-        fileName:
-          type: string
-          example: sbi_portfolio_to_pao_20211031.csv
-          description: Наименование загруженного файла. Проверки - 1. Наименование файла должно соответствовать фаблону "sbi_portfolio_to_pao_YYYYMMDD.csv"   2. Число DD в дате должно соответствовать последнему дню месяца MM 
-        reportingDate:
-          type: string
-          format: date
-          description: Отчетная дата. Проверки - 1. Число DD в дате должно соответствовать последнему дню месяца MM    2. Должна быть меньше или равна дате в loadDate. Значение заполняется из первого элемента файла из поля reportingDate.
-        loadDate:
-          type: string
-          format: date-time
-          description: Дата загрузки файла в формате "YYYY-MM-DDTHH:MI:SS.MSSZ" приведенная к UTC+0. При отображении в UI дата и время корректируются в соответствии с локальной timeZone пользователя
-        employeeId:
-          type: string
-          format: uuid
-          description: Идентификатор пользователя, который выполнил загрузку файла
-        data:
-          type: array
-          description: Загружаемые данные из файла
-          items:
-            $ref: "#/components/schemas/data"
+        request:
+          type: object
+          properties:
+            fileName:
+              type: string
+              example: sbi_portfolio_to_pao_20211031.csv
+              description: Наименование загруженного файла. Проверки - 1. Наименование файла должно соответствовать фаблону "sbi_portfolio_to_pao_YYYYMMDD.csv"   2. Число DD в дате должно соответствовать последнему дню месяца MM 
+            reportingDate:
+              type: string
+              format: date
+              description: Отчетная дата. Проверки - 1. Число DD в дате должно соответствовать последнему дню месяца MM    2. Должна быть меньше или равна дате в loadDate. Значение заполняется из первого элемента файла из поля reportingDate.
+            loadDate:
+              type: string
+              format: date-time
+              description: Дата загрузки файла в формате "YYYY-MM-DDTHH:MI:SS.MSSZ" приведенная к UTC+0. При отображении в UI дата и время корректируются в соответствии с локальной timeZone пользователя
+            employeeId:
+              type: string
+              format: uuid
+              description: Идентификатор пользователя, который выполнил загрузку файла
+            data:
+              type: array
+              description: Загружаемые данные из файла
+              items:
+                $ref: "#/components/schemas/data"
       required:
       - fileName
       - reportingDate
@@ -384,20 +387,23 @@ components:
       title: metadataRequest
       type: object
       properties:
-        filter:
+        request:
           type: object
           properties:
-            reportingDate:
-              $ref: "#/components/schemas/dateRangeTemplate"
-            loadDate:
-              $ref: "#/components/schemas/dateRangeTemplate"
-            fileNameLike:
-              type: string
-            employeeId:
-              type: array
-              items:
-                type: string
-                format: uuid
+            filter:
+              type: object
+              properties:
+                reportingDate:
+                  $ref: "#/components/schemas/dateRangeTemplate"
+                loadDate:
+                  $ref: "#/components/schemas/dateRangeTemplate"
+                fileNameLike:
+                  type: string
+                employeeId:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
     
     # схема ответа на запрос метаданных по файлу
     metadataResp:
@@ -425,25 +431,28 @@ components:
       title: dataRequest
       type: object
       properties:
-        filter:
+        request:
           type: object
           properties:
-            reportingDate:
-              $ref: "#/components/schemas/dateRangeTemplate"
-            conclusionDate:
-              $ref: "#/components/schemas/dateRangeTemplate"
-            dealId:
-              type: string
-            dealName:
-              type: string
-            financialInstrumentId:
-              type: string
-            financialInstrumentType:
-              type: string
-            clientCrmId:
-              type: string
-            clientName:
-              type: string
+            filter:
+              type: object
+              properties:
+                reportingDate:
+                  $ref: "#/components/schemas/dateRangeTemplate"
+                conclusionDate:
+                  $ref: "#/components/schemas/dateRangeTemplate"
+                dealId:
+                  type: string
+                dealName:
+                  type: string
+                financialInstrumentId:
+                  type: string
+                financialInstrumentType:
+                  type: string
+                clientCrmId:
+                  type: string
+                clientName:
+                  type: string
     
     # схема ответа на запрос данных по файлу
     dataResp:
