@@ -1,7 +1,7 @@
 openapi: 3.0.2
 info:
   title: Загрузка CSV с портфелем СБИ
-  version: 1.0.0
+  version: 1.0.1
 servers:
   - url: http://localhost:8080/v1
     description: Основной урл
@@ -34,7 +34,7 @@ paths:
         content:
           application/json:
             schema:  
-              $ref: "#/components/schemas/dictionary"
+              $ref: "#/components/schemas/requestPostFinancialInstrumentType"
 
       responses: 
         '200':
@@ -114,9 +114,14 @@ paths:
       requestBody:
         description: В теле передаются данные для фильтрации выборки
         content:
+          application/x-www-form-urlencoded:
+            schema:  
+              $ref: "#/components/schemas/metadataReq"
           application/json:
             schema:  
               $ref: "#/components/schemas/metadataReq"
+            
+          
             
       responses: 
         '200':
@@ -472,6 +477,14 @@ components:
           type: integer
         count:
           type: integer
+
+    # структура запроса на POST запрос "Типы финансовых инструментов"
+    requestPostFinancialInstrumentType:
+      title: requestPostFinancialInstrumentType
+      type: object
+      properties:
+        request:
+          $ref: "#/components/schemas/dictionary"
 
     # структура ответа на POST запрос "Типы финансовых инструментов"
     responsePostFinancialInstrumentType:
