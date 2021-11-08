@@ -9,40 +9,41 @@ tags:
   - name: briefcase-SBI
     description: Набор методов работы с портфелем СБИ
 paths:
-  /briefcasesbi/financialInstrumentType:
-    get:
-      tags:
-        - briefcase-SBI
-      summary: Чтение типов финансовых инструментов
-      description: ''
-                  
-      responses: 
-        '200':
-          description: Ok
+  comment: >  
+    /briefcasesbi/financialInstrumentType:
+      get:
+        tags:
+          - briefcase-SBI
+        summary: Чтение типов финансовых инструментов
+        description: ''
+                    
+        responses: 
+          '200':
+            description: Ok
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/responseGetFinancialInstrumentType"
+      
+      post:
+        tags:
+          - briefcase-SBI
+        summary: Запись типов финансовых инструментов
+        description: ''
+        requestBody:
+          description: Структура объекта "Типы финансовых инструментов"
           content:
             application/json:
-              schema:
-                $ref: "#/components/schemas/responseGetFinancialInstrumentType"
-    
-    post:
-      tags:
-        - briefcase-SBI
-      summary: Запись типов финансовых инструментов
-      description: ''
-      requestBody:
-        description: Структура объекта "Типы финансовых инструментов"
-        content:
-          application/json:
-            schema:  
-              $ref: "#/components/schemas/requestPostFinancialInstrumentType"
+              schema:  
+                $ref: "#/components/schemas/requestPostFinancialInstrumentType"
 
-      responses: 
-        '200':
-          description: Ok
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/responsePostFinancialInstrumentType"
+        responses: 
+          '200':
+            description: Ok
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/responsePostFinancialInstrumentType"
 
   /briefcasesbi:
     post:
