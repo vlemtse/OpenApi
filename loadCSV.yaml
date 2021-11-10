@@ -9,7 +9,7 @@ info:
     "{пользовательское\_наименование\_поля}" не соответствует типу данных "{наименование\_типа\_для\_пользователя}"
     >Соответствия типа и наименование\_типа\_для\_пользователя:
 
-    >integer  - Число
+    >integer  - Целое число
 
     >number   - Дробное число
 
@@ -298,6 +298,8 @@ components:
           example: кредит
           description: |
             Пользовательское наименование: Тип Финансового инструмента. 
+
+            В запросе устанавливается значение поля code из таблицы FINANCIAL_INSTRUMENT_TYPES
             
             Проверки: 
             1. значение поля файла равно одному из значений справочника FINANCIAL_INSTRUMENT_TYPES поля name (значения справочника и файла перед сравнением приводится к нижнему регистру) | иначе 
@@ -341,6 +343,7 @@ components:
             Пользовательское наименование: № договора займа
         interestRatePerCustomer:
           type: number
+          format: double
           example: 12.25697401
           description: |
             Пользовательское наименование: % ставка на клиента (эффективная ставка по МСФО) 
@@ -430,6 +433,7 @@ components:
             >сообщение - по шаблону НесоответствиеЗначению (тип\_сравнения = равно, значение\_сравнения = "да или нет")
         balanceOfUrgentDebtAsOfTheDate:
           type: number
+          format: double
           minimum: 0
           example: 731166002.01
           description: |
@@ -449,6 +453,7 @@ components:
             >сообщение - по шаблону НесоответствиеЗначению (тип\_сравнения = больше или равно, значение\_сравнения = 0)
         bsReserve:
           type: number
+          format: double
           minimum: 0
           example: 54.52
           description: |
@@ -468,6 +473,7 @@ components:
             >сообщение - по шаблону НесоответствиеЗначению (тип\_сравнения = больше или равно, значение\_сравнения = 0) 
         plReserveForThePeriod:
           type: number
+          format: double
           example: 0
           description: |
             Пользовательское наименование: Резерв PL за период
@@ -480,6 +486,7 @@ components:
             >сообщение - по шаблону НесоответствиеТипу 
         plOfTheWarrantForThePeriod:
           type: number
+          format: double
           example: 0
           description: |
             Пользовательское наименование: PL варранта за период
@@ -492,6 +499,7 @@ components:
             >сообщение - по шаблону НесоответствиеТипу 
         commissionIncome:
           type: number
+          format: double
           example: 0
           description: |
             Пользовательское наименование: Комиссионный доход
@@ -510,6 +518,7 @@ components:
             >сообщение - по шаблону НесоответствиеЗначению (тип\_сравнения = больше или равно, значение\_сравнения = 0)
         ifrsIncome:
           type: number
+          format: double
           example: 8266719
           description: |
             Пользовательское наименование: % Доход (МСФО)
@@ -522,6 +531,7 @@ components:
             >сообщение - по шаблону НесоответствиеТипу 
         creditModificationEffect:
           type: number
+          format: double
           example: 65431
           description: |
             Пользовательское наименование: Кредит. Эффект от модификации
@@ -534,6 +544,7 @@ components:
             >сообщение - по шаблону НесоответствиеТипу 
         writeOff:
           type: number
+          format: double
           example: 7524
           description: |
             Пользовательское наименование: Списание
@@ -551,6 +562,7 @@ components:
             Пользовательское наименование: Комментарий
         fundingEarlyRepaymentFee:
           type: number
+          format: double
           example: 78678
           description: |
             Пользовательское наименование: Плата за досрочное погашение фондирования
@@ -563,6 +575,7 @@ components:
             >сообщение - по шаблону НесоответствиеТипу 
         unselectedLimit:
           type: number
+          format: double
           minimum: 0
           example: 7867
           description: |
@@ -582,6 +595,7 @@ components:
             >сообщение - по шаблону НесоответствиеЗначению (тип\_сравнения = больше или равно, значение\_сравнения = 0)
         stockIncomeDividends:
           type: number
+          format: double
           minimum: 0
           example: 45645
           description: |
@@ -601,6 +615,7 @@ components:
             >сообщение - по шаблону НесоответствиеЗначению (тип\_сравнения = больше или равно, значение\_сравнения = 0)
         stockIncomeRevaluationOfFairValue:
           type: number
+          format: double
           example: 564
           description: |
             Пользовательское наименование: Акции. Доход. Переоценка Fair Value
@@ -613,6 +628,7 @@ components:
             >сообщение - по шаблону НесоответствиеТипу 
         additionalProfitabilityIncomeRevaluationOfFairValue:
           type: number
+          format: double
           example: 456
           description: |
             Пользовательское наименование: Доп. доходность. Доход. Переоценка Fair Value
@@ -625,6 +641,7 @@ components:
             >сообщение - по шаблону НесоответствиеТипу 
         defaultAssets3BasketPnlAdjustmentUnwind:
           type: number
+          format: double
           example: 7865
           description: |
             Пользовательское наименование: Дефолтные активы (3 корзина). PnL. Корректировка Unwind
@@ -637,6 +654,7 @@ components:
             >сообщение - по шаблону НесоответствиеТипу 
         shareOfDiaInIncome:
           type: number
+          format: double
           example: 0.5
           description: |
             Пользовательское наименование: Доля ДИД в доходе
@@ -660,6 +678,7 @@ components:
             Пользовательское наименование: Подразделение (Департамент) с hard доходом
         creditBalanceFairValue:
           type: number
+          format: double
           example: 0.5
           minimum: 0
           description: |
@@ -679,6 +698,7 @@ components:
             >сообщение - по шаблону НесоответствиеЗначению (тип\_сравнения = больше или равно, значение\_сравнения = 0)
         creditIncomeFairValueChange:
           type: number
+          format: double
           example: 0.2
           description: |
             Пользовательское наименование: Кредит. Доход. Изменение Fair Value
@@ -691,6 +711,7 @@ components:
             >сообщение - по шаблону НесоответствиеТипу 
         creditIncomeFairValueChangeCreditComponent:
           type: number
+          format: double
           example: 0.1
           description: |
             Пользовательское наименование: Кредит. Доход. Изменение Fair Value (кредитная составляющая)
@@ -723,6 +744,7 @@ components:
             Заполняется при создании объекта в БД
         number:
           type: integer
+          format: uint
           example: 1
           description: |
             Пользовательское наименование: №  
