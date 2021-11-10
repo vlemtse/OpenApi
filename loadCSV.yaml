@@ -3,9 +3,10 @@ info:
   title: Загрузка CSV с портфелем СБИ
   version: 1.0.1
   description: |
-    Шаблоны пользовательских сообщений:
+    **Шаблоны** пользовательских сообщений:
     ___
-    Шаблон НесоответствиеТипу = Значение "{значение}" поля "{пользовательское\_наименование\_поля}" не соответствует типу данных "{наименование\_типа\_для\_пользователя}"
+    **НесоответствиеТипу** = Для финансового инструмента "{значение ID Финансового инструмента}" значение "{значение}" поля 
+    "{пользовательское\_наименование\_поля}" не соответствует типу данных "{наименование\_типа\_для\_пользователя}"
     >Соответствия типа и наименование\_типа\_для\_пользователя:
 
     >integer  - Число
@@ -16,28 +17,31 @@ info:
 
     >dateTime - Дата и время
     ___
-    Шаблон НесоответствиеЗначениюСправочника = Значение "{значение}" поля "{пользовательское\_наименование\_поля}" не найдено в справочнике "{пользовательское\_наименование\_справочника}"
+    **НесоответствиеЗначениюСправочника** = Для финансового инструмента "{значение ID Финансового инструмента}" значение 
+    "{значение}" поля "{пользовательское\_наименование\_поля}" не найдено в справочнике 
+    "{пользовательское\_наименование\_справочника}"
     ___ 
     
-    Шаблон НесоответствиеДнюМесяца = Значение "{значение}" поля "{пользовательское\_наименование\_поля}" не соответствует последнему дню месяца "{наименование\_месяца\_ММ}"
+    **НесоответствиеДнюМесяца** = Для финансового инструмента "{значение ID Финансового инструмента}" значение "{значение}" 
+    поля "{пользовательское\_наименование\_поля}" не соответствует последнему дню месяца "{наименование\_месяца\_ММ}"
 
-    >Соответствия месяцев: 01 - январь, 02 - февраль, ... 
+    >Соответствия месяцев: 
+    
+    >01 - Январь, 
+    
+    >02 - Февраль, 
+    
+    >... 
     ___ 
     
-    Шаблон НесоответствиеЗначению = Значение "{значение}" поля "{пользовательское\_наименование\_поля}" должно быть {тип\_сравнения} "{значение\_сравнения}"
+    **НесоответствиеЗначению** = Для финансового инструмента "{значение ID Финансового инструмента}" значение "{значение}" 
+    поля "{пользовательское\_наименование\_поля}" должно быть {тип\_сравнения} "{значение\_сравнения}"
     ___
 
-    Шаблон НесоответствиеДиапазонуЗначений = Значение "{значение}" поля "{пользовательское\_наименование\_поля}" должно быть {тип\_сравнения1} "{значение\_сравнения1}" и {тип\_сравнения2} "{значение\_сравнения2}"
-    ___ 
-
-    Шаблон НесоответствиеТипу = Значение "{значение}" поля "{пользовательское\_наименование\_поля}"
-    ___ 
-
-    Шаблон НесоответствиеТипу = Значение "{значение}" поля "{пользовательское\_наименование\_поля}"
-    ___ 
-
-    Шаблон НесоответствиеТипу = Значение "{значение}" поля "{пользовательское\_наименование\_поля}"
-    ___  
+    **НесоответствиеДиапазонуЗначений** = Для финансового инструмента "{значение ID Финансового инструмента}" значение 
+    "{значение}" поля "{пользовательское\_наименование\_поля}" должно быть {тип\_сравнения1} "{значение\_сравнения1}" 
+    и {тип\_сравнения2} "{значение\_сравнения2}"
+    ___
 
 servers:
   - url: http://localhost:8080/v1
@@ -48,6 +52,7 @@ tags:
     description: Набор методов работы с портфелем СБИ
 
 paths:
+  
   # /briefcasesbi/financialInstrumentType:
   #   get:
   #     tags:
@@ -121,48 +126,19 @@ paths:
         
         >fileName
       
-      # --> Шаблон. Стандартный набор параметров при чтении списка
       parameters:
-        - name: sort
-          in: query
-          required: false
-          description: В сортировке указываются направление сортировки(+/-) и имена полей через запятую.
-          schema:
-            type: string
-            # Скорректировать пример для текущего метода ->
-            example: +number
-        - name: limit
-          in: query
-          required: true
-          description: Ограничение количества элементов в выборке. Значение - 0 - выбрать всё
-          schema:
-            type: integer
-            example: 10
-        - name: offset
-          in: query
-          required: true
-          description: Смещение страницы - 0, 1, 2 и т.д.
-          schema:
-            type: integer
-            example: 0
-        - name: returnCount
-          in: query
-          required: false
-          description: Указывается нужно ли возвращать общее количество элементов
-          schema:
-            type: boolean
-            example: true
-        - name: returnOnlyCount
-          in: query
-          required: false
-          description: Указывается нужно ли вернуть только количество элементов
-          schema:
-            type: boolean
-            example: false
-      # <-- Шаблон.
+        - $ref: "#/components/parameters/sortGetMetadata"
+        # --> Шаблон. Стандартный набор параметров при чтении списка
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/offset"
+        - $ref: "#/components/parameters/returnCount"
+        - $ref: "#/components/parameters/returnOnlyCount"
+        # <-- Шаблон.
 
       requestBody:
-        description: В теле передаются данные для фильтрации выборки. Content-type:application/json используется только для визуализации тела запроса в SwaggerUI 
+        description: |
+          В теле передаются данные для фильтрации выборки. Content-type:application/json используется только 
+          для визуализации тела запроса в SwaggerUI 
         content:
           application/json:
             schema:
@@ -205,45 +181,15 @@ paths:
         
         >clientName
       
-      # --> Шаблон. Стандартный набор параметров при чтении списка
+      
       parameters:
-        - name: sort
-          in: query
-          required: false
-          description: В сортировке указываются направление сортировки(+/-) и имена полей через запятую.
-          schema:
-            type: string
-            # Скорректировать пример для текущего метода ->
-            example: +dealId,+dealName
-        - name: limit
-          in: query
-          required: true
-          description: Ограничение количества элементов в выборке. Значение - 0 - выбрать всё
-          schema:
-            type: integer
-            example: 10
-        - name: offset
-          in: query
-          required: true
-          description: Смещение страницы - 0, 1, 2 и т.д.
-          schema:
-            type: integer
-            example: 0
-        - name: returnCount
-          in: query
-          required: false
-          description: Указывается нужно ли возвращать общее количество элементов
-          schema:
-            type: boolean
-            example: true
-        - name: returnOnlyCount
-          in: query
-          required: false
-          description: Указывается нужно ли вернуть только количество элементов
-          schema:
-            type: boolean
-            example: false
-      # <-- Шаблон.
+        - $ref: "#/components/parameters/sortGetData"
+        # --> Шаблон. Стандартный набор параметров при чтении списка
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/offset"
+        - $ref: "#/components/parameters/returnCount"
+        - $ref: "#/components/parameters/returnOnlyCount"
+        # <-- Шаблон.
 
       requestBody:
         description: В теле передаются данные для фильтрации выборки
@@ -272,7 +218,7 @@ components:
             metadata:
               type: object
               description: Метаданные файла
-              $ref: "#/components/schemas/metadataStructure"
+              $ref: "#/components/schemas/metadata"
             data:
               type: array
               description: Загружаемые данные из файла
@@ -325,6 +271,8 @@ components:
           example: 59-Заем-2
           description: |
             Пользовательское наименование: ID Финансового инструмента
+
+            Используется для поиска дублей
         financialInstrumentType:
           type: string
           example: кредит
@@ -354,7 +302,8 @@ components:
             
             >тип уведомления - ERROR, 
             
-            >сообщение - по шаблону НесоответствиеЗначению (тип\_сравнения = равно, значение\_сравнения = значение поля reportingDate метаданных)
+            >сообщение - по шаблону НесоответствиеЗначению (тип\_сравнения = равно, значение\_сравнения = значение поля 
+            reportingDate метаданных)
         clientCrmId:
           type: string
           example: 1-76TSYN8
@@ -461,6 +410,7 @@ components:
             >сообщение - по шаблону НесоответствиеЗначению (тип\_сравнения = равно, значение\_сравнения = "да или нет")
         balanceOfUrgentDebtAsOfTheDate:
           type: number
+          minimum: 0
           example: 731166002.01
           description: |
             Пользовательское наименование: Остаток срочной задолженности (основной долг) на дату 
@@ -479,7 +429,8 @@ components:
             >сообщение - по шаблону НесоответствиеЗначению (тип\_сравнения = больше или равно, значение\_сравнения = 0)
         bsReserve:
           type: number
-          example: 0
+          minimum: 0
+          example: 54.52
           description: |
             Пользовательское наименование: Резерв BS
             
@@ -592,6 +543,7 @@ components:
             >сообщение - по шаблону НесоответствиеТипу 
         unselectedLimit:
           type: number
+          minimum: 0
           example: 7867
           description: |
             Пользовательское наименование: Невыбранный лимит
@@ -610,6 +562,7 @@ components:
             >сообщение - по шаблону НесоответствиеЗначению (тип\_сравнения = больше или равно, значение\_сравнения = 0)
         stockIncomeDividends:
           type: number
+          minimum: 0
           example: 45645
           description: |
             Пользовательское наименование: Акции. Доход. Дивиденды
@@ -688,6 +641,7 @@ components:
         creditBalanceFairValue:
           type: number
           example: 0.5
+          minimum: 0
           description: |
             Пользовательское наименование: Кредит. Баланс. Fair Value
 
@@ -727,9 +681,17 @@ components:
             >тип уведомления - ERROR, 
             
             >сообщение - по шаблону НесоответствиеТипу 
+      required:
+        - dealId
+        - dealName
+        - financialInstrumentId
+        - financialInstrumentType
+        - reportingDate
+        - smbProduct
+        
 
-    metadataStructure:
-      title: metadataStructure
+    metadata:
+      title: metadata
       type: object
       properties:
         objectId:
@@ -778,7 +740,8 @@ components:
             
             >тип уведомления - ERROR, 
             
-            >сообщение - по шаблону НесоответствиеЗначению (тип\_сравнения = меньше или равно, значение\_сравнения = значение поля loadDate)
+            >сообщение - по шаблону НесоответствиеЗначению (тип\_сравнения = меньше или равно, значение\_сравнения = 
+            значение поля loadDate)
         loadDate:
           type: string
           format: date-time
@@ -848,7 +811,7 @@ components:
             items:
               type: array
               items:
-                $ref: "#/components/schemas/metadataStructure"
+                $ref: "#/components/schemas/metadata"
         errors:
           type: array
           items:
@@ -1017,4 +980,64 @@ components:
           description: Наименование элемента 
         nameEn:
           type: string
-          description: Наименование элемента на английском языке 
+          description: Наименование элемента на английском языке
+
+  parameters:
+    limit:  
+      name: limit
+      in: query
+      required: true
+      description: Ограничение количества элементов в выборке. Значение - 0 - выбрать всё
+      schema:
+        type: integer
+        format: uint
+        minimum: 0
+        example: 10
+    
+    offset:  
+      name: offset
+      in: query
+      required: true
+      description: Смещение страницы - 0, 1, 2 и т.д.
+      schema:
+        type: integer
+        format: uint
+        example: 0
+      
+    returnCount:  
+      name: returnCount
+      in: query
+      required: false
+      description: Указывается нужно ли возвращать общее количество элементов
+      schema:
+        type: boolean
+        example: true
+      
+    returnOnlyCount:  
+      name: returnOnlyCount
+      in: query
+      required: false
+      description: Указывается нужно ли вернуть только количество элементов
+      schema:
+        type: boolean
+        example: false
+
+    sortGetData:
+      name: sort
+      in: query
+      required: false
+      description: В сортировке указываются направление сортировки(+/-) и имена полей через запятую.
+      schema:
+        type: string
+        # Скорректировать пример для текущего метода ->
+        example: +dealId,+dealName
+
+    sortGetMetadata:
+      name: sort
+      in: query
+      required: false
+      description: В сортировке указываются направление сортировки(+/-) и имена полей через запятую.
+      schema:
+        type: string
+        # Скорректировать пример для текущего метода ->
+        example: +number
