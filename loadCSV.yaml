@@ -137,7 +137,7 @@ paths:
 
       requestBody:
         description: |
-          В теле передаются данные для фильтрации выборки. Content-type:application/json используется только 
+          В теле передаются данные для фильтрации выборки. **Content-type: application/json** используется только 
           для визуализации тела запроса в SwaggerUI 
         content:
           application/json:
@@ -192,7 +192,9 @@ paths:
         # <-- Шаблон.
 
       requestBody:
-        description: В теле передаются данные для фильтрации выборки
+        description: |
+          В теле передаются данные для фильтрации выборки. **Content-type: application/json** используется только 
+          для визуализации тела запроса в SwaggerUI
         content:
           application/json:
             schema:  
