@@ -1,0 +1,1088 @@
+openapi: 3.0.2
+info:
+  title: Загрузка CSV с портфелем СБИ
+  version: 1.0.1
+  description: |
+    **Шаблоны** пользовательских сообщений:
+    ___
+    **НесоответствиеТипу** = Для финансового инструмента "{значение ID Финансового инструмента}" значение "{значение}" поля 
+    "{пользовательское\_наименование\_поля}" не соответствует типу данных "{наименование\_типа\_для\_пользователя}"
+    >Соответствия типа и наименование\_типа\_для\_пользователя:
+
+    >integer  - Целое число
+
+    >number   - Дробное число
+
+    >date     - Дата
+
+    >dateTime - Дата и время
+    ___
+    **НесоответствиеЗначениюСправочника** = Для финансового инструмента "{значение ID Финансового инструмента}" значение 
+    "{значение}" поля "{пользовательское\_наименование\_поля}" не найдено в справочнике 
+    "{пользовательское\_наименование\_справочника}"
+    ___ 
+    
+    **НесоответствиеДнюМесяца** = Для финансового инструмента "{значение ID Финансового инструмента}" значение "{значение}" 
+    поля "{пользовательское\_наименование\_поля}" не соответствует последнему дню месяца "{наименование\_месяца\_ММ}"
+
+    >Соответствия месяцев: 
+    
+    >01 - Январь, 
+    
+    >02 - Февраль, 
+    
+    >... 
+    ___ 
+    
+    **НесоответствиеЗначению** = Для финансового инструмента "{значение ID Финансового инструмента}" значение "{значение}" 
+    поля "{пользовательское\_наименование\_поля}" должно быть {тип\_сравнения} "{значение\_сравнения}"
+    ___
+
+    **НесоответствиеДиапазонуЗначений** = Для финансового инструмента "{значение ID Финансового инструмента}" значение 
+    "{значение}" поля "{пользовательское\_наименование\_поля}" должно быть {тип\_сравнения1} "{значение\_сравнения1}" 
+    и {тип\_сравнения2} "{значение\_сравнения2}"
+    ___
+
+servers:
+  - url: http://localhost:8080/v1
+    description: Основной урл
+
+tags:
+  - name: briefcase-SBI
+    description: Набор методов работы с портфелем СБИ
+
+paths:
+  
+  # /briefcasesbi/financialInstrumentType:
+  #   get:
+  #     tags:
+  #       - briefcase-SBI
+  #     summary: Чтение типов финансовых инструментов
+  #     description: ''
+                  
+  #     responses: 
+  #       '200':
+  #         description: Ok
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/responseGetFinancialInstrumentType"
+    
+  #   post:
+  #     tags:
+  #       - briefcase-SBI
+  #     summary: Запись типов финансовых инструментов
+  #     description: ''
+  #     requestBody:
+  #       description: Структура объекта "Типы финансовых инструментов"
+  #       content:
+  #         application/json:
+  #           schema:  
+  #             $ref: "#/components/schemas/requestPostFinancialInstrumentType"
+
+  #     responses: 
+  #       '200':
+  #         description: Ok
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/responsePostFinancialInstrumentType"
+
+  /briefcasesbi:
+    post:
+      tags:
+        - briefcase-SBI
+      summary: Запись данных на отчетную дату
+      description: ''
+      requestBody:
+        description: |
+          Метаданные файла, которые необходимо загрузить в базу, а также содержимое файла. 
+          **Content-type: application/json** используется только для визуализации тела запроса в SwaggerUI 
+        content:
+          application/json:
+            schema:  
+              $ref: "#/components/schemas/briefcaseMetadataReq"
+          application/x-www-form-urlencoded:
+            schema:  
+              $ref: "#/components/schemas/briefcaseMetadataReq"
+            
+      responses: 
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responseAddBriefcase"
+            application/x-www-form-urlencoded:
+              schema:  
+                $ref: "#/components/schemas/responseAddBriefcase"
+            
+  
+  /briefcasesbi/getMetadata:
+    post:
+      tags:
+        - briefcase-SBI
+      summary: Чтение метаданных загруженных файлов
+      description: |
+        Чтение всех метаданных загруженных файлов с возможностью отбора и сортировки списка. 
+        
+        Поля, доступные для сортировки:
+        >number, 
+        
+        >reportingDate, 
+        
+        >loadDate, 
+        
+        >fileName
+      
+      parameters:
+        - $ref: "#/components/parameters/sortGetMetadata"
+        # --> Шаблон. Стандартный набор параметров при чтении списка
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/offset"
+        - $ref: "#/components/parameters/returnCount"
+        - $ref: "#/components/parameters/returnOnlyCount"
+        # <-- Шаблон.
+
+      requestBody:
+        description: |
+          В теле передаются данные для фильтрации выборки. 
+          **Content-type: application/json** используется только для визуализации тела запроса в SwaggerUI 
+        content:
+          application/json:
+            schema:
+              description:  
+              $ref: "#/components/schemas/metadataReq"  
+          application/x-www-form-urlencoded:
+            schema:  
+              $ref: "#/components/schemas/metadataReq"
+                    
+      responses: 
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/metadataResp"
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: "#/components/schemas/metadataResp" 
+
+  /briefcasesbi/getData:
+    post:
+      tags:
+        - briefcase-SBI
+      summary: Чтение данных загруженных файлов
+      description: |
+        Чтение всех данных загруженных файлов с возможностью отбора и сортировки списка. 
+        
+        Поля, доступные для сортировки:
+        >reportingDate,
+
+        >conclusionDate,
+
+        >dealId, 
+        
+        >dealName, 
+        
+        >financialInstrumentId, 
+        
+        >financialInstrumentType, 
+        
+        >clientCrmId, 
+        
+        >clientName
+      
+      
+      parameters:
+        - $ref: "#/components/parameters/sortGetData"
+        # --> Шаблон. Стандартный набор параметров при чтении списка
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/offset"
+        - $ref: "#/components/parameters/returnCount"
+        - $ref: "#/components/parameters/returnOnlyCount"
+        # <-- Шаблон.
+
+      requestBody:
+        description: |
+          В теле передаются данные для фильтрации выборки. 
+          **Content-type: application/json** используется только для визуализации тела запроса в SwaggerUI
+        content:
+          application/json:
+            schema:  
+              $ref: "#/components/schemas/dataReq"
+          application/x-www-form-urlencoded:
+            schema:  
+              $ref: "#/components/schemas/dataReq"
+            
+      responses: 
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dataResp" 
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: "#/components/schemas/dataResp" 
+                   
+components:
+  schemas:
+    briefcaseMetadataReq:
+      title: briefcaseMetadataRequest
+      type: object
+      properties:
+        request:
+          type: object
+          properties:
+            metadata:
+              type: object
+              description: Метаданные файла
+              $ref: "#/components/schemas/metadata"
+            data:
+              type: array
+              description: Загружаемые данные из файла
+              items:
+                $ref: "#/components/schemas/data"
+      required:
+      - fileName
+      - reportingDate
+      - loadDate
+      - employeeId
+      - data
+    
+    data:
+      title: data
+      type: object
+      properties:
+        objectId:
+          type: string
+          format: uuid
+          description: |
+            Пользовательское наименование: Идентификатор записи (не отображается на форме) 
+            
+            Заполняется при создании объекта в БД.
+        metadataId:
+          type: string
+          format: uuid
+          description: |
+            Пользовательское наименование: Идентификатор метаданных (не отображается на форме). 
+            
+            Ссылка на метаданные файла из которого получен объект.
+        dealId:
+          type: integer
+          example: 59
+          description: |
+            Пользовательское наименование: DealId. 
+            
+            Проверки: 
+            1. значение поля файла соответствует типу данных модели | иначе 
+            
+            >тип уведомления - ERROR, 
+            
+            >сообщение - по шаблону НесоответствиеТипу
+        dealName:
+          type: string
+          example: НИИ Застройка
+          description: |
+            Пользовательское наименование: DealName
+        financialInstrumentId:
+          type: string
+          example: 59-Заем-2
+          description: |
+            Пользовательское наименование: ID Финансового инструмента
+
+            Используется для поиска дублей
+        financialInstrumentType:
+          type: string
+          example: кредит
+          description: |
+            Пользовательское наименование: Тип Финансового инструмента. 
+
+            В запросе устанавливается значение поля code из таблицы FINANCIAL_INSTRUMENT_TYPES
+            
+            Проверки: 
+            1. значение поля файла равно одному из значений справочника FINANCIAL_INSTRUMENT_TYPES поля name (значения справочника и файла перед сравнением приводится к нижнему регистру) | иначе 
+            
+            >тип уведомления - WARNING, 
+            
+            >сообщение - по шаблону НесоответствиеЗначениюСправочника (имя справочнкиа = Типы финансовых инструментов) 
+        reportingDate:
+          type: string
+          format: date
+          description: |
+            Пользовательское наименование: Отчетная дата. 
+            
+            Проверки:
+            1. значение поля файла соответствует типу данных модели | иначе 
+            
+            >тип уведомления - ERROR, 
+            
+            >сообщение - по шаблону НесоответствиеТипу
+            
+            2. значение поля файла равно значению reportingDate метаданных файла | иначе 
+            
+            >тип уведомления - ERROR, 
+            
+            >сообщение - по шаблону НесоответствиеЗначению (тип\_сравнения = равно, значение\_сравнения = значение поля 
+            reportingDate метаданных)
+        clientCrmId:
+          type: string
+          example: 1-76TSYN8
+          description: |
+            Пользовательское наименование: CRM ID клиента
+        clientName:
+          type: string
+          example: АО Ромашка
+          description: |
+            Пользовательское наименование: Наименование клиента
+        loanAgreementNumber:
+          type: string
+          example: РН-1
+          description: |
+            Пользовательское наименование: № договора займа
+        interestRatePerCustomer:
+          type: number
+          format: double
+          example: 12.25697401
+          description: |
+            Пользовательское наименование: % ставка на клиента (эффективная ставка по МСФО) 
+            
+            Проверки: 
+            1. целая часть значения поля файла больше или равна 0 и меньше 30 | иначе 
+            
+            >тип уведомления - WARNING, 
+            
+            >сообщение - по шаблону НесоответствиеДиапазонуЗначений (тип\_сравнения1 = больше или равно, значение\_сравнения1 = 0, тип\_сравнения2 = меньше, значение\_сравнения2 = 30)
+            
+            2. значение поля файла соответствует типу данных модели | иначе 
+            
+            >тип уведомления - ERROR, 
+            
+            >сообщение - по шаблону НесоответствиеТипу
+        conclusionDate:
+          type: string
+          format: date
+          description: |
+            Пользовательское наименование: Дата заключения 
+            
+            Проверки: 
+            1. значение "{значение}" поля файла соответствует типу данных модели | иначе 
+            
+            >тип уведомления - ERROR, 
+            
+            >сообщение - по шаблону НесоответствиеТипу
+        currencyCode:
+          type: string
+          example: RUB
+          description: |
+            Пользовательское наименование: Валюта 
+            
+            Проверка: 
+            1. значение поля файла равно одному из значений справочника CURRENCIES поля code | иначе 
+            
+            >тип уведомления - ERROR, 
+            
+            >сообщение - по шаблону НесоответствиеЗначениюСправочника (пользовательское\_наименование\_справочника = Валюты)
+        loanAgreementWithSberbankNumber:
+          type: string
+          example: 6016
+          description: |
+            Пользовательское наименование: № кредитного договора со Сбербанком
+        loanAgreementWithSberbankConclusionDate:
+          type: string
+          format: date
+          description: |
+            Пользовательское наименование: Дата заключения договора со Сбербанком 
+            
+            Проверки: 
+            1. значение поля файла соответствует типу данных модели | иначе 
+            
+            >тип уведомления - ERROR, 
+            
+            >сообщение - по шаблону НесоответствиеТипу
+        smbProduct:
+          type: boolean
+          example: True
+          description: |
+            Пользовательское наименование: Тип сделки: продукт SMB (да/нет) 
+            
+            Преобразование:
+            >значение "да" = true, значение "нет" = false  
+            
+            Проверки: 
+            1. значение поля файла равно значениям "да" или "нет" | иначе 
+            
+            >тип уведомления - ERROR, 
+            
+            >сообщение - по шаблону НесоответствиеЗначению (тип\_сравнения = равно, значение\_сравнения = "да или нет")
+        fullParticipationOfTbCaInTheMargin:
+          type: boolean
+          example: True
+          description: |
+            Пользовательское наименование: С полным участием ТБ/ЦА в марже (да/нет) 
+            
+            Преобразование: 
+            >значение "да" = true, значение "нет" = false  
+            
+            Проверки: 
+            1. значение поля файла равно значениям "да" или "нет" | иначе 
+            
+            >тип уведомления - ERROR, 
+            
+            >сообщение - по шаблону НесоответствиеЗначению (тип\_сравнения = равно, значение\_сравнения = "да или нет")
+        balanceOfUrgentDebtAsOfTheDate:
+          type: number
+          format: double
+          minimum: 0
+          example: 731166002.01
+          description: |
+            Пользовательское наименование: Остаток срочной задолженности (основной долг) на дату 
+            
+            Проверки:
+            1. значение поля файла соответствует типу данных модели | иначе 
+            
+            >тип уведомления - ERROR, 
+            
+            >сообщение - по шаблону НесоответствиеТипу   
+            
+            2. значение поля файла больше или равно 0 | иначе 
+            
+            >тип уведомления - ERROR, 
+            
+            >сообщение - по шаблону НесоответствиеЗначению (тип\_сравнения = больше или равно, значение\_сравнения = 0)
+        bsReserve:
+          type: number
+          format: double
+          minimum: 0
+          example: 54.52
+          description: |
+            Пользовательское наименование: Резерв BS
+            
+            Проверки:
+            1. значение поля файла соответствует типу данных модели | иначе 
+            
+            >тип уведомления - ERROR, 
+            
+            >сообщение - по шаблону НесоответствиеТипу   
+            
+            2. значение поля файла больше или равно 0 | иначе 
+            
+            >тип уведомления - ERROR, 
+            
+            >сообщение - по шаблону НесоответствиеЗначению (тип\_сравнения = больше или равно, значение\_сравнения = 0) 
+        plReserveForThePeriod:
+          type: number
+          format: double
+          example: 0
+          description: |
+            Пользовательское наименование: Резерв PL за период
+
+            Проверки:
+            1. значение поля файла соответствует типу данных модели | иначе 
+            
+            >тип уведомления - ERROR, 
+            
+            >сообщение - по шаблону НесоответствиеТипу 
+        plOfTheWarrantForThePeriod:
+          type: number
+          format: double
+          example: 0
+          description: |
+            Пользовательское наименование: PL варранта за период
+
+            Проверки:
+            1. значение поля файла соответствует типу данных модели | иначе 
+            
+            >тип уведомления - ERROR, 
+            
+            >сообщение - по шаблону НесоответствиеТипу 
+        commissionIncome:
+          type: number
+          format: double
+          example: 0
+          description: |
+            Пользовательское наименование: Комиссионный доход
+
+            Проверки:
+            1. значение поля файла соответствует типу данных модели | иначе 
+            
+            >тип уведомления - ERROR, 
+            
+            >сообщение - по шаблону НесоответствиеТипу   
+            
+            2. значение поля файла больше или равно 0 | иначе 
+            
+            >тип уведомления - WARNING, 
+            
+            >сообщение - по шаблону НесоответствиеЗначению (тип\_сравнения = больше или равно, значение\_сравнения = 0)
+        ifrsIncome:
+          type: number
+          format: double
+          example: 8266719
+          description: |
+            Пользовательское наименование: % Доход (МСФО)
+
+            Проверки:
+            1. значение поля файла соответствует типу данных модели | иначе 
+            
+            >тип уведомления - ERROR, 
+            
+            >сообщение - по шаблону НесоответствиеТипу 
+        creditModificationEffect:
+          type: number
+          format: double
+          example: 65431
+          description: |
+            Пользовательское наименование: Кредит. Эффект от модификации
+
+            Проверки:
+            1. значение поля файла соответствует типу данных модели | иначе 
+            
+            >тип уведомления - ERROR, 
+            
+            >сообщение - по шаблону НесоответствиеТипу 
+        writeOff:
+          type: number
+          format: double
+          example: 7524
+          description: |
+            Пользовательское наименование: Списание
+
+            Проверки:
+            1. значение поля файла соответствует типу данных модели | иначе 
+            
+            >тип уведомления - ERROR, 
+            
+            >сообщение - по шаблону НесоответствиеТипу 
+        comment:
+          type: string
+          example: test
+          description: |
+            Пользовательское наименование: Комментарий
+        fundingEarlyRepaymentFee:
+          type: number
+          format: double
+          example: 78678
+          description: |
+            Пользовательское наименование: Плата за досрочное погашение фондирования
+
+            Проверки:
+            1. значение поля файла соответствует типу данных модели | иначе 
+            
+            >тип уведомления - ERROR, 
+            
+            >сообщение - по шаблону НесоответствиеТипу 
+        unselectedLimit:
+          type: number
+          format: double
+          minimum: 0
+          example: 7867
+          description: |
+            Пользовательское наименование: Невыбранный лимит
+
+            Проверки:
+            1. значение поля файла соответствует типу данных модели | иначе 
+            
+            >тип уведомления - ERROR, 
+            
+            >сообщение - по шаблону НесоответствиеТипу   
+            
+            2. значение поля файла больше или равно 0 | иначе 
+            
+            >тип уведомления - ERROR, 
+            
+            >сообщение - по шаблону НесоответствиеЗначению (тип\_сравнения = больше или равно, значение\_сравнения = 0)
+        stockIncomeDividends:
+          type: number
+          format: double
+          minimum: 0
+          example: 45645
+          description: |
+            Пользовательское наименование: Акции. Доход. Дивиденды
+
+            Проверки:
+            1. значение поля файла соответствует типу данных модели | иначе 
+            
+            >тип уведомления - ERROR, 
+            
+            >сообщение - по шаблону НесоответствиеТипу   
+            
+            2. значение поля файла больше или равно 0 | иначе 
+            
+            >тип уведомления - ERROR, 
+            
+            >сообщение - по шаблону НесоответствиеЗначению (тип\_сравнения = больше или равно, значение\_сравнения = 0)
+        stockIncomeRevaluationOfFairValue:
+          type: number
+          format: double
+          example: 564
+          description: |
+            Пользовательское наименование: Акции. Доход. Переоценка Fair Value
+
+            Проверки:
+            1. значение поля файла соответствует типу данных модели | иначе 
+            
+            >тип уведомления - ERROR, 
+            
+            >сообщение - по шаблону НесоответствиеТипу 
+        additionalProfitabilityIncomeRevaluationOfFairValue:
+          type: number
+          format: double
+          example: 456
+          description: |
+            Пользовательское наименование: Доп. доходность. Доход. Переоценка Fair Value
+
+            Проверки:
+            1. значение поля файла соответствует типу данных модели | иначе 
+            
+            >тип уведомления - ERROR, 
+            
+            >сообщение - по шаблону НесоответствиеТипу 
+        defaultAssets3BasketPnlAdjustmentUnwind:
+          type: number
+          format: double
+          example: 7865
+          description: |
+            Пользовательское наименование: Дефолтные активы (3 корзина). PnL. Корректировка Unwind
+
+            Проверки:
+            1. значение поля файла соответствует типу данных модели | иначе 
+            
+            >тип уведомления - ERROR, 
+            
+            >сообщение - по шаблону НесоответствиеТипу 
+        shareOfDiaInIncome:
+          type: number
+          format: double
+          example: 0.5
+          description: |
+            Пользовательское наименование: Доля ДИД в доходе
+
+            Проверки:
+            1. значение поля файла соответствует типу данных модели | иначе 
+            
+            >тип уведомления - ERROR, 
+            
+            >сообщение - по шаблону НесоответствиеТипу
+
+            2. целая часть значения поля файла больше или равна 0 и меньше 1 | иначе 
+            
+            >тип уведомления - WARNING, 
+            
+            >сообщение - по шаблону НесоответствиеДиапазонуЗначений (тип\_сравнения1 = больше или равно, значение\_сравнения1 = 0, тип\_сравнения2 = меньше, значение\_сравнения2 = 1)
+        subdivisionDepartmentWithHardIncome:
+          type: string
+          example: какое-то подразделение
+          description: |
+            Пользовательское наименование: Подразделение (Департамент) с hard доходом
+        creditBalanceFairValue:
+          type: number
+          format: double
+          example: 0.5
+          minimum: 0
+          description: |
+            Пользовательское наименование: Кредит. Баланс. Fair Value
+
+            Проверки:
+            1. значение поля файла соответствует типу данных модели | иначе 
+            
+            >тип уведомления - ERROR, 
+            
+            >сообщение - по шаблону НесоответствиеТипу   
+            
+            2. значение поля файла больше или равно 0 | иначе 
+            
+            >тип уведомления - ERROR, 
+            
+            >сообщение - по шаблону НесоответствиеЗначению (тип\_сравнения = больше или равно, значение\_сравнения = 0)
+        creditIncomeFairValueChange:
+          type: number
+          format: double
+          example: 0.2
+          description: |
+            Пользовательское наименование: Кредит. Доход. Изменение Fair Value
+
+            Проверки:
+            1. значение поля файла соответствует типу данных модели | иначе 
+            
+            >тип уведомления - ERROR, 
+            
+            >сообщение - по шаблону НесоответствиеТипу 
+        creditIncomeFairValueChangeCreditComponent:
+          type: number
+          format: double
+          example: 0.1
+          description: |
+            Пользовательское наименование: Кредит. Доход. Изменение Fair Value (кредитная составляющая)
+
+            Проверки:
+            1. значение поля файла соответствует типу данных модели | иначе 
+            
+            >тип уведомления - ERROR, 
+            
+            >сообщение - по шаблону НесоответствиеТипу 
+      required:
+        - dealId
+        - dealName
+        - financialInstrumentId
+        - financialInstrumentType
+        - reportingDate
+        - smbProduct
+        
+
+    metadata:
+      title: metadata
+      type: object
+      properties:
+        objectId:
+          type: string
+          format: uuid
+          description: |
+            Пользовательское наименование: Идентификатор записи (не отображается на форме) 
+            
+            Заполняется при создании объекта в БД
+        number:
+          type: integer
+          format: uint
+          example: 1
+          description: |
+            Пользовательское наименование: №  
+            
+            Начальное значение = 1 
+            
+            Заполняется при создании объекта в БД автоинкрементом
+        fileName:
+          type: string
+          example: sbi_portfolio_to_pao_20211031.csv
+          description: |
+            Пользовательское наименование: Файл 
+            
+            Проверки: 
+            1. Наименование файла должно соответствовать фаблону "sbi_portfolio_to_pao_YYYYMMDD.csv" | иначе
+
+            >тип уведомления - ERROR, 
+            
+            >сообщение - Наименование загружаемого файла не соответствует шаблону "sbi_portfolio_to_pao_YYYYMMDD.csv"
+            2. Число DD в дате равно последнему дню месяца MM | иначе 
+            
+            >тип уведомления - ERROR, 
+            
+            >сообщение - по шаблону НесоответствиеДнюМесяца 
+        reportingDate:
+          type: string
+          format: date
+          description: |
+            Пользовательское наименование: Отчетная дата
+            
+            Заполненяется из даты в наименовании файла после проверки имени файла (fileName)
+
+            Проверки:
+            1. значение поля меньше или равно дате в поле loadDate | иначе 
+            
+            >тип уведомления - ERROR, 
+            
+            >сообщение - по шаблону НесоответствиеЗначению (тип\_сравнения = меньше или равно, значение\_сравнения = 
+            значение поля loadDate)
+        loadDate:
+          type: string
+          format: date-time
+          description: |
+            Пользовательское наименование: Дата и время загрузки файла
+            
+            Правила:
+            1. перед выполнением запроса дата приводится к UTC+0. 
+            2. при отображении в UI дата и время корректируются в соответствии с локальной timeZone пользователя
+        employeeId:
+          type: string
+          format: uuid
+          description: |
+            Пользовательское наименование: Сотрудник
+            
+            Заполняется objectId из данных текущего пользователя. В UI отображается fullName (ФИО) пользователя.
+
+    responseAddBriefcase:
+      title: responseAddBriefcase
+      type: object
+      properties:
+        result:
+          type: object
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/error"
+        status:
+          type: string
+          example: SUCCESS / WARNING / ERROR 
+        
+    # схема запроса метаданных по файлу   
+    metadataReq:
+      title: metadataRequest
+      type: object
+      properties:
+        request:
+          type: object
+          properties:
+            filter:
+              type: object
+              properties:
+                reportingDate:
+                  description: Отчетная дата
+                  $ref: "#/components/schemas/dateRangeTemplate"
+                loadDate:
+                  description: Дата и время загрузки файла
+                  $ref: "#/components/schemas/dateRangeTemplate"
+                fileNameLike:
+                  type: string
+                employeeId:
+                  description: Массив идентификаторов сотрудников
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+    
+    # схема ответа на запрос метаданных по файлу
+    metadataResp:
+      title: metadataResponse
+      type: object
+      properties:
+        result:
+          properties:
+            listInfo:
+              $ref: "#/components/schemas/resultFSP"
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/metadata"
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/error"
+        status:
+          type: string
+          example: SUCCESS / WARNING / ERROR
+
+    # схема запроса данных по файлу   
+    dataReq:
+      title: dataRequest
+      type: object
+      properties:
+        request:
+          type: object
+          properties:
+            filter:
+              type: object
+              properties:
+                metadataId:
+                  type: string
+                  format: uuid
+                reportingDate:
+                  $ref: "#/components/schemas/dateRangeTemplate"
+                conclusionDate:
+                  $ref: "#/components/schemas/dateRangeTemplate"
+                dealId:
+                  type: string
+                dealName:
+                  type: string
+                financialInstrumentId:
+                  type: string
+                financialInstrumentType:
+                  type: string
+                clientCrmId:
+                  type: string
+                clientName:
+                  type: string
+    
+    # схема ответа на запрос данных по файлу
+    dataResp:
+      title: dataResponse
+      type: object
+      properties:
+        result:
+          properties:
+            listInfo:
+              $ref: "#/components/schemas/resultFSP"
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/data"
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/error"
+        status:
+          type: string
+          example: SUCCESS / WARNING / ERROR        
+    
+    # шаблон объекта listInfo для ответов на запросы с фильтрацией, сортировкой и пагинацией
+    resultFSP:
+      title: resultFSP
+      type: object
+      properties:
+        limit:
+          type: integer
+        offset:
+          type: integer
+        count:
+          type: integer
+
+    # структура запроса на POST запрос "Типы финансовых инструментов"
+    requestPostFinancialInstrumentType:
+      title: requestPostFinancialInstrumentType
+      type: object
+      properties:
+        request:
+          $ref: "#/components/schemas/dictionary"
+
+    # структура ответа на POST запрос "Типы финансовых инструментов"
+    responsePostFinancialInstrumentType:
+      title: responseFinancialInstrumentType
+      type: object
+      properties:
+        result:
+          $ref: "#/components/schemas/dictionary"
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/error"
+        status:
+          type: string
+          example: SUCCESS / WARNING / ERROR
+    
+    # структура ответа на GET запрос "Типы финансовых инструментов"
+    responseGetFinancialInstrumentType:
+      title: responseFinancialInstrumentType
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: "#/components/schemas/dictionary"
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/error"
+        status:
+          type: string
+          example: SUCCESS / WARNING / ERROR
+
+    # шаблон диапазона дат для фильтрации
+    dateRangeTemplate:
+      title: dateRangeTemplate
+      type: object
+      properties:
+        from:
+          type: string
+          format: date
+        to:
+          type: string
+          format: date
+
+    # шаблон ответа. На бэке ППРБ3 формируется через класс ApiResponse
+    responseTemplate:
+      title: responseTemplate
+      type: object
+      properties:
+        result:
+          type: object
+          #type: array
+          #items:
+          #  item
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/error"
+        status:
+          type: string
+          example: SUCCESS / WARNING / ERROR
+    
+    # шаблон структуры для массива errors
+    error:
+      title: error
+      description: Структура элемента массива errors
+      type: object
+      properties:
+        code:
+          type: string
+          description: Код ошибки
+          example: VALIDATION
+        message:
+          type: string
+          description: Описание ошибки
+          example: Какое-то описание ошибки
+    
+    # шаблон структуры справочника
+    dictionary:
+      title: dictionary
+      description: Структура стандартного справочника
+      type: object
+      properties:
+        code:
+          type: string
+          description: Идентификатор записи (первичный ключ)
+        name:
+          type: string
+          description: Наименование элемента 
+        nameEn:
+          type: string
+          description: Наименование элемента на английском языке
+
+  parameters:
+    limit:  
+      name: limit
+      in: query
+      required: true
+      description: Ограничение количества элементов в выборке. Значение - 0 - выбрать всё
+      schema:
+        type: integer
+        format: uint
+        minimum: 0
+        example: 10
+    
+    offset:  
+      name: offset
+      in: query
+      required: true
+      description: Смещение страницы - 0, 1, 2 и т.д.
+      schema:
+        type: integer
+        format: uint
+        example: 0
+      
+    returnCount:  
+      name: returnCount
+      in: query
+      required: false
+      description: Указывается нужно ли возвращать общее количество элементов
+      schema:
+        type: boolean
+        example: true
+      
+    returnOnlyCount:  
+      name: returnOnlyCount
+      in: query
+      required: false
+      description: Указывается нужно ли вернуть только количество элементов
+      schema:
+        type: boolean
+        example: false
+
+    sortGetData:
+      name: sort
+      in: query
+      required: false
+      description: В сортировке указываются направление сортировки(+/-) и имена полей через запятую.
+      schema:
+        type: string
+        # Скорректировать пример для текущего метода ->
+        example: +dealId,+dealName
+
+    sortGetMetadata:
+      name: sort
+      in: query
+      required: false
+      description: В сортировке указываются направление сортировки(+/-) и имена полей через запятую.
+      schema:
+        type: string
+        # Скорректировать пример для текущего метода ->
+        example: -number
