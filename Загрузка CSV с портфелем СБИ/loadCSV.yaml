@@ -751,7 +751,7 @@ components:
             
             Начальное значение = 1 
             
-            Заполняется при создании объекта в БД
+            Заполняется при создании объекта в БД автоинкрементом
         fileName:
           type: string
           example: sbi_portfolio_to_pao_20211031.csv
@@ -799,7 +799,7 @@ components:
           description: |
             Пользовательское наименование: Сотрудник
             
-            Заполняется из данных текущего пользователя
+            Заполняется objectId из данных текущего пользователя. В UI отображается fullName (ФИО) пользователя.
 
     responseAddBriefcase:
       title: responseAddBriefcase
@@ -873,6 +873,9 @@ components:
             filter:
               type: object
               properties:
+                metadataId:
+                  type: string
+                  format: uuid
                 reportingDate:
                   $ref: "#/components/schemas/dateRangeTemplate"
                 conclusionDate:
@@ -1082,4 +1085,4 @@ components:
       schema:
         type: string
         # Скорректировать пример для текущего метода ->
-        example: +number
+        example: -number
