@@ -1,6 +1,6 @@
 openapi: 3.0.2
 info:
-  title: Загрузка CSV с портфелем СБИ
+  title: Сотрудники
   version: 1.0.0
   description: |
 
@@ -9,7 +9,7 @@ servers:
     description: Основной урл
 
 tags:
-  - name: employees
+  - name: Employees
     description: Набор методов работы с сотрудниками
 
 paths:
@@ -22,13 +22,9 @@ paths:
         Чтение всех метаданных загруженных файлов с возможностью отбора и сортировки списка. 
         
         Поля, доступные для сортировки:
-        >number, 
+        >personalNumber, 
         
-        >reportingDate, 
-        
-        >loadDate, 
-        
-        >fileName
+        >fullName
       
       parameters:
         - $ref: "#/components/parameters/sortGetMetadata"
@@ -70,36 +66,50 @@ components:
       properties:
         department:
           type: string
+          example: Управление тестирования
         deskCodes:
           type: array
           items:
             type: string
+            example: UTC
         emailAlpha:
           type: string
+          example: UTC-A@test.com
         emailSigma:
           type: string
+          example: UTC-S@test.com
         firstName:
           type: string
+          example: Тест
         fullName:
           type: string
+          example: Тестеров Тест Тестович
         lastName:
           type: string
+          example: Тестеров
         middleName:
           type: string
+          example: Тестович
         objectId:
           type: string
+          format: uuid
         personalNumber:
           type: string
+          example: 123456789
         phoneNumber:
           type: string
+          example: +7(999)888-77-66
         positionName:
           type: string
+          example: Ведущий тестировщик
         roles:
           type: array
           items:
             type: string
+            example: admin
         spasId:
           type: string
+          format: uuid
         systemUser:
           type: boolean
         
@@ -120,6 +130,12 @@ components:
                   items:
                     type: string
                     format: uuid
+                personalNumber:
+                  description: Массив персональнеых номеров сотрудников
+                  type: array
+                  items:
+                    type: string
+                
     
     # схема ответа на запрос сотрудников
     employeesResp:
