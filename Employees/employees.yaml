@@ -16,7 +16,7 @@ paths:
   /employees/search:
     post:
       tags:
-        - employees
+        - Employees
       summary: Поиск сотрудников
       description: |
         Чтение всех метаданных загруженных файлов с возможностью отбора и сортировки списка. 
