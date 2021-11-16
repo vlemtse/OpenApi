@@ -1,0 +1,310 @@
+openapi: 3.0.2
+info:
+  title: Шаблон спецификации
+  version: 1.0.0
+  description: |
+    ___
+    Расширенное описание метода
+    ___
+
+servers:
+  # Можно задать несколько URL для тестирования на разных серверах
+  - url: http://localhost:8080/v1
+    description: Основной урл
+
+tags:
+  # К тегу привязываются методы. Используется для фильтрации методов.
+  - name: users
+    description: Набор методов работы с портфелем СБИ
+
+paths:
+  /user/{id}:
+    get:
+      tags:
+        - users
+      summary: Получить информацию о пользователе
+      description: |
+        Расширенное описание метода
+
+      parameters:
+        - name: id
+          # Доступные значения для 'in': path / query / header / cookie
+          in: path 
+          required: true
+          description: Идентификатор пользователя
+          schema:
+            type: string
+            format: uuid
+                
+
+      responses: 
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/respGetUser"
+
+  /user:
+    post:
+      tags:
+        - users
+      summary: Создание пользователя
+      description: Расширенное описание
+      
+      requestBody:
+        description: |
+          Метаданные файла, которые необходимо загрузить в базу, а также содержимое файла. 
+          **Content-type: application/json** используется только для визуализации тела запроса в SwaggerUI 
+        content:
+          application/json:
+            schema:  
+              $ref: "#/components/schemas/reqPostUser"
+          application/x-www-form-urlencoded:
+            schema:  
+              $ref: "#/components/schemas/reqPostUser"
+
+      responses: 
+          '200':
+            description: Ok
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/respGetUser"
+              application/x-www-form-urlencoded:
+                schema:  
+                  $ref: "#/components/schemas/respGetUser"
+
+            
+  
+  /user/search:
+    post:
+      tags:
+        - users
+      summary: Получение пользователей
+      description: |
+        Метод чтения пользователей. Используется для фильтрации, сортировки и пагинации на бэке
+      
+      parameters:
+        - $ref: "#/components/parameters/sortUsers"
+        # --> Шаблон. Стандартный набор параметров при чтении списка
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/offset"
+        - $ref: "#/components/parameters/returnCount"
+        - $ref: "#/components/parameters/returnOnlyCount"
+        # <-- Шаблон.
+
+      requestBody:
+        description: |
+          В теле передаются данные для фильтрации выборки. 
+          **Content-type: application/json** используется только для визуализации тела запроса в SwaggerUI 
+        content:
+          application/json:
+            schema:
+              description:  
+              $ref: "#/components/schemas/reqSearchUser"  
+          application/x-www-form-urlencoded:
+            schema:  
+              $ref: "#/components/schemas/reqSearchUser"
+                    
+      responses: 
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/respSearchUser"
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: "#/components/schemas/respSearchUser" 
+                
+components:
+  schemas:
+    user:
+      title: user
+      type: object
+      properties:
+        id: 
+          type: string
+          format: uuid
+        fullName:
+          type: string
+          example: Тестеров Тест Тестович
+        lastName:
+          type: string
+          example: Тестеров
+        firstName:
+          type: string
+          example: Тест
+        middleName:
+          type: string
+          example: Тестович
+
+    respGetUser:
+      title: respGetUser
+      type: object
+      properties:
+        result:
+          $ref: "#/components/schemas/user"
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/error"
+        status:
+          type: string
+          example: SUCCESS / WARNING / ERROR
+
+    reqPostUser:
+      title: reqPostUser
+      type: object
+      properties:
+        request:
+          $ref: "#/components/schemas/user"
+
+    reqSearchUser:
+      title: reqSearchUser
+      type: object
+      properties:
+        filter:
+          $ref: "#/components/schemas/user"
+            
+    respSearchUser:
+      title: respSearchUser
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: "#/components/schemas/user"
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/error"
+        status:
+          type: string
+          example: SUCCESS / WARNING / ERROR
+
+    # шаблон объекта listInfo для ответов на запросы с фильтрацией, сортировкой и пагинацией
+    resultFSP:
+      title: resultFSP
+      type: object
+      properties:
+        limit:
+          type: integer
+        offset:
+          type: integer
+        count:
+          type: integer
+
+    # шаблон диапазона дат для фильтрации
+    dateRangeTemplate:
+      title: dateRangeTemplate
+      type: object
+      properties:
+        from:
+          type: string
+          format: date
+        to:
+          type: string
+          format: date
+
+    # шаблон ответа. На бэке ППРБ3 формируется через класс ApiResponse
+    responseTemplate:
+      title: responseTemplate
+      type: object
+      properties:
+        result:
+          type: object
+          #type: array
+          #items:
+          #  item
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/error"
+        status:
+          type: string
+          example: SUCCESS / WARNING / ERROR
+    
+    # шаблон структуры для массива errors
+    error:
+      title: error
+      description: Структура элемента массива errors
+      type: object
+      properties:
+        code:
+          type: string
+          description: Код ошибки
+          example: VALIDATION
+        message:
+          type: string
+          description: Описание ошибки
+          example: Какое-то описание ошибки
+    
+    # шаблон структуры справочника
+    dictionary:
+      title: dictionary
+      description: Структура стандартного справочника
+      type: object
+      properties:
+        code:
+          type: string
+          description: Идентификатор записи (первичный ключ)
+        name:
+          type: string
+          description: Наименование элемента 
+        nameEn:
+          type: string
+          description: Наименование элемента на английском языке
+
+  parameters:
+    limit:  
+      name: limit
+      in: query
+      required: true
+      description: Ограничение количества элементов в выборке. Значение - 0 - выбрать всё
+      schema:
+        type: integer
+        format: uint
+        minimum: 0
+        example: 10
+    
+    offset:  
+      name: offset
+      in: query
+      required: true
+      description: Смещение страницы - 0, 1, 2 и т.д.
+      schema:
+        type: integer
+        format: uint
+        example: 0
+      
+    returnCount:  
+      name: returnCount
+      in: query
+      required: false
+      description: Указывается нужно ли возвращать общее количество элементов
+      schema:
+        type: boolean
+        example: true
+      
+    returnOnlyCount:  
+      name: returnOnlyCount
+      in: query
+      required: false
+      description: Указывается нужно ли вернуть только количество элементов
+      schema:
+        type: boolean
+        example: false
+
+    sortUsers:
+      name: sort
+      in: query
+      required: false
+      description: В сортировке указываются направление сортировки(+/-) и имена полей через запятую.
+      schema:
+        type: string
+        # Скорректировать пример для текущего метода ->
+        example: -fullName
+
+
