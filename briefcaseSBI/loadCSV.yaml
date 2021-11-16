@@ -44,7 +44,7 @@ info:
     ___
 
 servers:
-  - url: http://localhost:8080/v1
+  - url: http://localhost:53210/v1
     description: Основной урл
 
 tags:
@@ -53,20 +53,20 @@ tags:
 
 paths:
   
-  # /briefcasesbi/financialInstrumentType:
-  #   get:
-  #     tags:
-  #       - briefcase-SBI
-  #     summary: Чтение типов финансовых инструментов
-  #     description: ''
-                  
-  #     responses: 
-  #       '200':
-  #         description: Ok
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: "#/components/schemas/responseGetFinancialInstrumentType"
+  /briefcasesbi/financialInstrumentType:
+    get:
+      tags:
+        - briefcase-SBI
+      summary: Чтение типов финансовых инструментов
+      description: ''
+                 
+      responses: 
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responseGetFinancialInstrumentType"
     
   #   post:
   #     tags:
