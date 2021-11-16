@@ -44,7 +44,7 @@ info:
     ___
 
 servers:
-  - url: http://localhost:9090/v1
+  - url: http://localhost:9091/v1
     description: Основной урл
 
 tags:
