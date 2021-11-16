@@ -49,7 +49,7 @@ servers:
 
 tags:
   - name: briefcase-SBI
-    description: Набор методов работы с портфелем СБИ
+    description: Набор методов работы с портфелем СБИ v1
 
 paths:
   
