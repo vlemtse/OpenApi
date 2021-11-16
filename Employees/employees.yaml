@@ -5,7 +5,7 @@ info:
   description: |
 
 servers:
-  - url: http://localhost:8080/v1
+  - url: http://localhost:53210/v1
     description: Основной урл
 
 tags:
