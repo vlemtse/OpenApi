@@ -1,7 +1,7 @@
 openapi: 3.0.2
 info:
   title: Загрузка CSV с портфелем СБИ
-  version: 1.0.5
+  version: 1.0.6
   description: |
     **Шаблоны** пользовательских сообщений:
     ___
