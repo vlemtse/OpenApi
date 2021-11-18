@@ -903,8 +903,7 @@ components:
                   description: Массив идентификаторов типов фин. инструментов
                   type: array
                   items:
-                    type: string
-                    format: uuid
+                    type: string                    
                 clientCrmIdLike:
                   type: string
                 clientNameLike:
