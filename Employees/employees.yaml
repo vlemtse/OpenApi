@@ -38,7 +38,10 @@ paths:
       requestBody:
         description: |
           В теле передаются данные для фильтрации выборки. 
-          **Content-type: application/json** используется только для визуализации тела запроса в SwaggerUI 
+          
+          **Content-Type: application/json** используется только для визуализации тела запроса в SwaggerUI
+
+          **Content-Type: application/x-www-form-urlencoded** используется для выполнения запросов
         content:
           application/json:
             schema:
