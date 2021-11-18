@@ -815,6 +815,15 @@ components:
             filter:
               type: object
               properties:
+                objectId:
+                  description: |
+                    Массив идентификаторов записей. 
+                    
+                    Не выводится на форму
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
                 reportingDate:
                   description: Отчетная дата
                   $ref: "#/components/schemas/dateRangeTemplate"
@@ -862,24 +871,43 @@ components:
             filter:
               type: object
               properties:
+                objectId:
+                  description: |
+                    Массив идентификаторов записей. 
+                    
+                    Не выводится на форму
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
                 metadataId:
-                  type: string
-                  format: uuid
+                  description: |
+                    Массив идентификаторов записей таблицы метаданных
+
+                    Не выводится на форму
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
                 reportingDate:
                   $ref: "#/components/schemas/dateRangeTemplate"
                 conclusionDate:
                   $ref: "#/components/schemas/dateRangeTemplate"
-                dealId:
+                dealIdLike:
                   type: string
-                dealName:
+                dealNameLike:
                   type: string
-                financialInstrumentId:
+                financialInstrumentIdLike:
                   type: string
                 financialInstrumentType:
+                  description: Массив идентификаторов типов фин. инструментов
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                clientCrmIdLike:
                   type: string
-                clientCrmId:
-                  type: string
-                clientName:
+                clientNameLike:
                   type: string
     
     # схема ответа на запрос данных по файлу
