@@ -54,11 +54,16 @@ paths:
       
       requestBody:
         description: |
+<<<<<<< HEAD
           Метаданные файла, которые необходимо загрузить в базу, а также содержимое файла.
           
           **Content-Type: application/json** используется только для визуализации тела запроса в SwaggerUI
 
           **Content-Type: application/x-www-form-urlencoded** используется для выполнения запросов
+=======
+          Метаданные файла, которые необходимо загрузить в базу, а также содержимое файла. 
+          **Content-type: application/json** используется только для визуализации тела запроса в SwaggerUI 
+>>>>>>> 4bed25f5932baf989037370d0d73a1bb3325c066
         content:
           application/json:
             schema:  
@@ -100,11 +105,15 @@ paths:
       requestBody:
         description: |
           В теле передаются данные для фильтрации выборки. 
+<<<<<<< HEAD
 
           **Content-Type: application/json** используется только для визуализации тела запроса в SwaggerUI
 
           **Content-Type: application/x-www-form-urlencoded** используется для выполнения запросов
            
+=======
+          **Content-type: application/json** используется только для визуализации тела запроса в SwaggerUI 
+>>>>>>> 4bed25f5932baf989037370d0d73a1bb3325c066
         content:
           application/json:
             schema:
