@@ -1,0 +1,210 @@
+openapi: 3.0.2
+info:
+  title: API 4 поколения для сервиса "Профиль сотрудника"
+  version: 1.0.0
+  description: |
+    ___
+    API 4 поколения. Используется для вызова сервиса "Профиль сотрудника" из 3 поколения
+    ___
+
+servers:
+  # Можно задать несколько URL для тестирования на разных серверах
+  - url: http://localhost:8080/v1
+    description: Основной урл
+  - url: http://localhost:9090/v1
+    description: Основной урл
+
+tags:
+  # К тегу привязываются методы. Используется для фильтрации методов и деления на разделы.
+  - name: employee profile
+    description: Набор методов работы с профилем сотрудника
+
+paths:
+  /employeeProfile/getEmployeeProfile:
+    get:
+      tags:
+        - employee profile
+      summary: Получить расширенную информацию о сотруднике
+      description: |
+        Получить расширенную информацию о сотруднике
+
+      parameters:
+        - name: personalNumber
+          # Доступные значения для 'in': path / query / header / cookie
+          in: query 
+          required: true
+          description: Табельный номер пользователя
+          schema:
+            type: string
+            example: '012345678'
+            
+                
+
+      responses: 
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/respGetEmployeeProfile"
+
+  /employeeProfile/searchSubdivision:
+    post:
+      tags:
+        - employee profile
+      summary: Получить информацию о подразделениях
+      description: Получить информацию о подразделениях
+      
+      requestBody:
+        description: |
+          
+
+          **Content-Type: application/json** используется только для визуализации тела запроса в SwaggerUI
+
+          **Content-Type: application/x-www-form-urlencoded** используется для выполнения запросов 
+        content:
+          application/json:
+            schema:  
+              $ref: "#/components/schemas/reqSearchSubdivision"
+          application/x-www-form-urlencoded:
+            schema:  
+              $ref: "#/components/schemas/reqSearchSubdivision"
+
+      responses: 
+          '200':
+            description: Ok
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/respSearchSubdivision"
+              application/x-www-form-urlencoded:
+                schema:  
+                  $ref: "#/components/schemas/respSearchSubdivision"
+
+            
+
+                
+components:
+  schemas:
+    employeeProfileInfo:
+      title: employeeProfileInfo
+      type: object
+      properties:
+        outerProfileId: 
+          type: string
+          format: uuid
+        outerBusinessId:
+          type: string
+          example: Тестеров Тест Тестович
+        personalNumber:
+          type: string
+          example: Тестеров
+        firstName:
+          type: string
+          example: Тест
+        middleName:
+          type: string
+          example: Тестович
+        lastName:
+          type: string
+          example: Тестеров
+        hired:
+          type: string
+          format: date-time
+          example: Тестович
+        fired:
+          type: string
+          format: date-time
+          example: Тестеров
+        subdivisionName:
+          type: string
+          example: Тестович
+        subdivisionId:
+          type: string
+          example: Тестеров
+        positionName:
+          type: string
+          example: Тестович
+        emailAlpha:
+          type: string
+          example: Тестеров
+        emailSigma:
+          type: string
+          example: Тестеров
+        phoneNumber:
+          type: string
+          example: Тестеров
+
+
+    subdivisionInfo:
+      title: subdivisionInfo
+      type: object
+      properties:
+        objectId: 
+          type: string
+        parentId: 
+          type: string
+        name: 
+          type: string
+        orgLevelCode: 
+          type: string
+        orgLevelName: 
+          type: string
+        
+
+    respGetEmployeeProfile:
+      title: respGetEmployeeProfile
+      type: object
+      properties:
+        result:
+          $ref: "#/components/schemas/employeeProfileInfo"
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/error"
+        status:
+          type: string
+          example: SUCCESS / WARNING / ERROR
+
+
+    reqSearchSubdivision:
+      title: reqSearchSubdivision
+      type: object
+      properties:
+        subdivisionId:
+          type: array
+          items:
+            type: string
+
+            
+    respSearchSubdivision:
+      title: respSearchSubdivision
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: "#/components/schemas/subdivisionInfo"
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/error"
+        status:
+          type: string
+          example: SUCCESS / WARNING / ERROR
+
+    
+    # шаблон структуры для массива errors
+    error:
+      title: error
+      description: Структура элемента массива errors
+      type: object
+      properties:
+        code:
+          type: string
+          description: Код ошибки
+          example: VALIDATION
+        message:
+          type: string
+          description: Описание ошибки
+          example: Какое-то описание ошибки
